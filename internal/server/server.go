@@ -60,7 +60,8 @@ func (s *MapDBServer) Serve() {
 // Creates a User that will be used to handle requests.
 func (s *MapDBServer) handleConnection(conn net.Conn) {
 	logger.Info("New connection from " + conn.RemoteAddr().String())
-
+	defer conn.Close()
+	
 	// TODO: implement me...
 
 	logger.Info("Connection closed from " + conn.RemoteAddr().String())
