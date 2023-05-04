@@ -2,6 +2,7 @@ package server
 
 import (
 	"log"
+	"strings"
 )
 
 type MapDBLogger struct {
@@ -17,7 +18,7 @@ func newMapDBLogger() *MapDBLogger {
 var logger *MapDBLogger = newMapDBLogger()
 
 func (l *MapDBLogger) Info(message string) {
-	l.logger.Println("[INFO]", message)
+	l.logger.Println("[INFO]", escapeString(message))
 }
 
 func (l *MapDBLogger) Error(message string) {
@@ -42,4 +43,8 @@ func (l *MapDBLogger) Trace(message string) {
 
 func (l *MapDBLogger) Warn(message string) {
 	l.logger.Println("[WARN]", message)
+}
+
+func escapeString(s string) string {
+	return strings.ReplaceAll(s, "\n", "\\n")
 }
