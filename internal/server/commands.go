@@ -15,13 +15,11 @@ type command interface {
 }
 
 func usage() string {
-	return fmt.Sprintf(
-		"Usage: <command> [arguments]\n\nCommands:\n%s ~ %s\n%s ~ %s\n",
-		CMD_EXIT,
-		commands[CMD_EXIT].Description(),
-		CMD_HELP,
-		commands[CMD_HELP].Description(),
-	)
+	usage := "Usage: <command> [arguments]\n\nCommands:\n"
+	for _, cmd := range commands {
+		usage += fmt.Sprintf("  %s ~ %s\n", cmd.Name(), cmd.Description())
+	}
+	return usage
 }
 
 type helpCommand struct{}
@@ -52,7 +50,6 @@ func (c *helpCommand) Description() string {
 }
 
 func (c *helpCommand) Handler(u *User, args []string) {
-	u.Conn().Write([]byte("Commands:\n"))
 	u.Conn().Write([]byte(usage()))
 }
 
