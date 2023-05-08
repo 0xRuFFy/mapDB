@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net"
 
 	"github.com/0xRuFFy/mapDB/internal/mapdb"
@@ -50,11 +49,6 @@ func (s *MapDBServer) Serve() {
 	defer s.listener.Close()
 	logger.Info("Listening on " + s.listener.Addr().String())
 
-	s.db.Set("test", "10")
-	logger.Debug(fmt.Sprintf("Database: %v", s.db.Keys()))
-	tmp, _ := s.db.Get("test")
-	logger.Debug(fmt.Sprintf("%v", tmp))
-
 	for {
 		conn, err := s.listener.Accept()
 		if err != nil {
@@ -72,13 +66,14 @@ func (s *MapDBServer) handleConnection(conn net.Conn) {
 	logger.Info("New connection from " + conn.RemoteAddr().String())
 	defer conn.Close()
 
-	user := NewUser(conn.RemoteAddr().String(), &conn)
+	user := NewUser(conn.RemoteAddr().String(), &conn, s.db)
 	s.users = append(s.users, user)
 	user.handle()
 
 	s.removeUser(user)
 }
 
+// removeUser removes a user from the users slice in the server.
 func (s *MapDBServer) removeUser(user *User) {
 	for i, u := range s.users {
 		if u == user {

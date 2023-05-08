@@ -1,6 +1,10 @@
 package mapdb
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/0xRuFFy/mapDB/internal/utils/errors"
+)
 
 type Database struct {
 	Items map[string]*MapDBItem
@@ -19,7 +23,7 @@ func (db *Database) Get(key string) (*MapDBItem, error) {
 
 	item, ok := db.Items[key]
 	if !ok {
-		return nil, nil
+		return nil, errors.KeyNotFoundError()
 	}
 
 	return item, nil

@@ -16,10 +16,11 @@ type User struct {
 	exit bool
 }
 
-func NewUser(addr string, conn *net.Conn) *User {
+func NewUser(addr string, conn *net.Conn, db *mapdb.Database) *User {
 	return &User{
 		addr: addr,
 		conn: conn,
+		db:   db,
 		exit: false,
 	}
 }
@@ -49,7 +50,6 @@ func (u *User) handle() {
 		n, err := conn.Read(tmp)
 		if err != nil {
 			if err.Error() != "EOF" {
-				logger.Debug("error was here")
 				logger.Error(err.Error())
 			}
 			break
@@ -58,7 +58,6 @@ func (u *User) handle() {
 		buf = append(buf, tmp[:n]...)
 		if n < globals.READ_BUFFER {
 			logger.Info(fmt.Sprintf("[%s] Received: %s", conn.RemoteAddr().String(), string(buf)))
-			conn.Write([]byte("Message received.\n"))
 
 			u.msgHandler(string(buf))
 			if u.exit {
@@ -76,8 +75,8 @@ func (u *User) handle() {
 func (u *User) msgHandler(msg string) {
 	split := strings.Split(strings.Trim(msg, "\n"), " ")
 	cmd := split[0]
-	if handel, ok := commands[cmd]; ok {
-		handel.Handler(u, split[1:])
+	if cmd, ok := commands[cmd]; ok {
+		cmd.Handler(u, split[1:])
 	} else {
 		u.Conn().Write([]byte("Invalid command.\n"))
 	}
