@@ -1,16 +1,19 @@
 package server
 
 import (
+	"fmt"
 	"net"
 
+	"github.com/0xRuFFy/mapDB/internal/mapdb"
 	"github.com/0xRuFFy/mapDB/internal/utils/globals"
-	// "github.com/0xRuFFy/mapDB/internal/utils/errors"
 )
 
 // MapDBServer is a server that handles requests from clients
 // and manages the mapDB key-value store.
 type MapDBServer struct {
 	listener net.Listener
+
+	db *mapdb.Database
 
 	users []*User
 }
@@ -30,6 +33,8 @@ func NewMapDBServer(port, host string) *MapDBServer {
 
 	return &MapDBServer{
 		listener: listener,
+		db:       mapdb.NewDatabase(),
+		users:    make([]*User, 0),
 	}
 }
 
@@ -44,6 +49,11 @@ func (s *MapDBServer) Serve() {
 
 	defer s.listener.Close()
 	logger.Info("Listening on " + s.listener.Addr().String())
+
+	s.db.Set("test", "10")
+	logger.Debug(fmt.Sprintf("Database: %v", s.db.Keys()))
+	tmp, _ := s.db.Get("test")
+	logger.Debug(fmt.Sprintf("%v", tmp))
 
 	for {
 		conn, err := s.listener.Accept()

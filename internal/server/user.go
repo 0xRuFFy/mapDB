@@ -5,12 +5,14 @@ import (
 	"net"
 	"strings"
 
+	"github.com/0xRuFFy/mapDB/internal/mapdb"
 	"github.com/0xRuFFy/mapDB/internal/utils/globals"
 )
 
 type User struct {
 	addr string
 	conn *net.Conn
+	db   *mapdb.Database
 	exit bool
 }
 
