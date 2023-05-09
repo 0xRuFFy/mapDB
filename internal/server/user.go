@@ -10,18 +10,20 @@ import (
 )
 
 type User struct {
-	addr string
-	conn *net.Conn
-	db   *mapdb.Database
-	exit bool
+	addr   string
+	conn   *net.Conn
+	db     *mapdb.Database
+	access AccessPrivilege
+	exit   bool
 }
 
 func NewUser(addr string, conn *net.Conn, db *mapdb.Database) *User {
 	return &User{
-		addr: addr,
-		conn: conn,
-		db:   db,
-		exit: false,
+		addr:   addr,
+		conn:   conn,
+		db:     db,
+		access: NoAccess,
+		exit:   false,
 	}
 }
 

@@ -1,6 +1,8 @@
 package globals
 
 const (
+	HOST = "192.168.236.10"
+
 	// NET_PROTOCOL is the network protocol that the server will use.
 	NET_PROTOCOL = "tcp"
 
